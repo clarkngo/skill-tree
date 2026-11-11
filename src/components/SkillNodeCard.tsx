@@ -46,6 +46,9 @@ function SkillNodeCardImpl({ data }: NodeProps<SkillFlowNode>) {
   const mastered = state === 'mastered';
   const [target, source] = direction === 'LR' ? [Position.Left, Position.Right] : [Position.Top, Position.Bottom];
 
+  const orbClass = !isSkill ? '' : locked ? 'orb-locked' : ready ? 'orb-ready' : mastered ? 'orb-mastered' : '';
+  const orbGlyph = !isSkill ? (n.kind === 'realm' ? '✦' : '◆') : locked ? null : ready ? '!' : mastered ? '★' : n.rank;
+
   return (
     <div
       data-node-id={n.id}
@@ -60,57 +63,63 @@ function SkillNodeCardImpl({ data }: NodeProps<SkillFlowNode>) {
       onFocus={() => !focused && actions.onActivate(n.id)}
       onClick={() => (isSkill ? actions.onOpen(n.id) : actions.onActivate(n.id))}
       onDoubleClick={() => hasChildren && actions.onToggle(n.id)}
-      style={{ width: NODE_WIDTH, height: NODE_HEIGHT }}
+      style={{ width: NODE_WIDTH, height: NODE_HEIGHT, ['--accent' as string]: ACCENTS[accent].hex }}
       className={[
-        'group relative flex flex-col justify-between rounded-xl border border-l-4 px-3 py-2 text-left shadow-sm outline-none transition-shadow',
-        ACCENTS[accent].border,
-        n.kind === 'realm' ? 'bg-slate-50 dark:bg-slate-800' : 'bg-white dark:bg-slate-900',
-        locked || ready ? 'border-dashed' : '',
-        ready && !focused ? 'ready-pulse border-emerald-400 dark:border-emerald-500' : '',
-        mastered && !focused ? 'border-amber-300 shadow-amber-200/60 shadow-md dark:border-amber-500/70 dark:shadow-amber-900/40' : '',
-        focused
-          ? 'border-indigo-500 ring-4 ring-indigo-500/30 shadow-md dark:border-indigo-400'
-          : !ready && !mastered
-            ? 'border-slate-200 hover:border-slate-400 dark:border-slate-700 dark:hover:border-slate-500'
-            : '',
-        'focus-visible:ring-4 focus-visible:ring-indigo-500/60',
+        'win node-card group flex items-center gap-3 py-2 pl-2.5 pr-3 text-left outline-none',
+        locked ? 'node-card-locked' : '',
+        mastered ? 'node-card-mastered' : '',
+        focused ? 'node-card-focused' : '',
       ].join(' ')}
     >
       <Handle type="target" position={target} isConnectable={false} className="!pointer-events-none !opacity-0" />
 
-      <div className="flex items-center gap-1.5">
-        {isSkill ? (
-          <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${ready ? 'bg-emerald-100 text-emerald-900 dark:bg-emerald-900/60 dark:text-emerald-100' : RANKS[n.rank].badge}`}>
-            {ready ? 'Ready' : mastered ? '★ Master' : RANKS[n.rank].name}
-          </span>
-        ) : (
-          <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${KIND_BADGE[n.kind]}`}>{KIND_LABEL[n.kind]}</span>
-        )}
-        {n.learning && (
-          <span title="Currently learning" className="rounded bg-rose-100 px-1.5 py-0.5 text-[10px] font-semibold text-rose-900 dark:bg-rose-900/60 dark:text-rose-100">
-            ⚔ Learning
-          </span>
-        )}
-        <span className="ml-auto flex items-center gap-1">
+      {focused && <HandCursor className={direction === 'TB' ? 'hand-cursor hand-cursor-down' : 'hand-cursor'} />}
+
+      <span
+        className={`orb shrink-0 ${n.kind === 'realm' ? 'h-12 w-12 text-xl' : 'h-10 w-10 text-base'} ${orbClass}`}
+        style={ready ? undefined : { ['--accent' as string]: ACCENTS[accent].hex }}
+        aria-hidden
+      >
+        {orbGlyph === null ? <LockIcon className="h-4 w-4" /> : orbGlyph}
+      </span>
+
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
+        <div className="flex items-center gap-1.5">
           {isSkill ? (
-            locked ? <LockIcon className="h-3 w-3 text-slate-400" /> : <RankPips rank={n.rank} />
+            <span className={`rounded-sm px-1 text-[9px] uppercase leading-[14px] tracking-wider ${ready ? 'border border-emerald-300/70 bg-emerald-950/70 text-emerald-200' : RANKS[n.rank].badge}`}>
+              {ready ? 'Ready' : RANKS[n.rank].name}
+            </span>
           ) : (
-            <span className="text-[10px] font-medium tabular-nums text-slate-500 dark:text-slate-400" aria-hidden>
-              {agg.unlocked}/{agg.skills}
+            <span className={`rounded-sm px-1 text-[9px] uppercase leading-[14px] tracking-wider ${KIND_BADGE[n.kind]}`}>{KIND_LABEL[n.kind]}</span>
+          )}
+          {n.learning && (
+            <span title="Currently learning" className="rounded-sm border border-rose-300/70 bg-rose-950/70 px-1 text-[9px] uppercase leading-[14px] tracking-wider text-rose-200">
+              ⚔ Quest
             </span>
           )}
-        </span>
-      </div>
-
-      <div className={`line-clamp-2 text-[13px] font-semibold leading-snug ${locked ? 'text-slate-400 dark:text-slate-500' : 'text-slate-900 dark:text-slate-100'}`}>
-        {n.label}
-      </div>
-
-      {!isSkill && agg.skills > 0 && (
-        <div className="h-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800" aria-hidden>
-          <div className={`h-full rounded-full ${ACCENTS[accent].dot}`} style={{ width: `${(agg.unlocked / agg.skills) * 100}%` }} />
+          <span className="ml-auto flex items-center">
+            {isSkill ? (
+              !locked && <RankPips rank={n.rank} />
+            ) : (
+              <span className="text-[10px] tabular-nums text-indigo-100/80" aria-hidden>
+                {agg.unlocked}/{agg.skills}
+              </span>
+            )}
+          </span>
         </div>
-      )}
+
+        <div
+          className={`line-clamp-2 leading-tight ${n.kind === 'realm' ? 'title-gold text-[15px]' : 'text-[13px]'} ${locked ? 'text-slate-400' : 'text-white'}`}
+        >
+          {n.label}
+        </div>
+
+        {!isSkill && agg.skills > 0 && (
+          <div className="gauge gauge-accent" aria-hidden>
+            <span style={{ width: `${(agg.unlocked / agg.skills) * 100}%` }} />
+          </div>
+        )}
+      </div>
 
       {hasChildren && (
         <button
@@ -123,13 +132,13 @@ function SkillNodeCardImpl({ data }: NodeProps<SkillFlowNode>) {
             actions.onToggle(n.id);
           }}
           className={[
-            'nodrag absolute z-10 flex h-6 w-6 items-center justify-center rounded-full border bg-white text-xs font-bold text-slate-600 shadow-sm',
-            'hover:border-indigo-500 hover:text-indigo-600 dark:bg-slate-800 dark:text-slate-300',
-            direction === 'LR' ? '-right-3 top-1/2 -translate-y-1/2' : '-bottom-3 left-1/2 -translate-x-1/2',
-            expanded ? 'border-slate-300 dark:border-slate-600' : 'border-indigo-400 dark:border-indigo-500',
+            'nodrag absolute z-10 flex h-6 w-6 rotate-45 items-center justify-center border-2 text-[11px] shadow-md',
+            'bg-gradient-to-br from-win-hi to-win-lo hover:border-gold-300',
+            direction === 'LR' ? '-right-3 top-1/2 -mt-3' : '-bottom-3 left-1/2 -ml-3',
+            expanded ? 'border-frame/70 text-indigo-100' : 'border-gold-400 text-gold-300',
           ].join(' ')}
         >
-          {expanded ? '−' : n.childrenIds.length}
+          <span className="-rotate-45">{expanded ? '−' : n.childrenIds.length}</span>
         </button>
       )}
 
@@ -138,12 +147,28 @@ function SkillNodeCardImpl({ data }: NodeProps<SkillFlowNode>) {
   );
 }
 
-export function RankPips({ rank, size = 'sm' }: { rank: number; size?: 'sm' | 'md' }) {
-  const dim = size === 'sm' ? 'h-1.5 w-2.5' : 'h-2 w-4';
+/** The classic pointing glove. */
+export function HandCursor({ className = 'hand-cursor' }: { className?: string }) {
   return (
-    <span className="flex gap-0.5" aria-hidden>
+    <svg viewBox="0 0 32 22" className={className} aria-hidden>
+      <path
+        d="M1 8h15V5.5a2.5 2.5 0 012.5-2.5H29a2 2 0 010 4h-6v1h3a2 2 0 010 4h-1a2 2 0 010 4h-1a2 2 0 010 4H12c-3 0-5-2-6-4H1z"
+        fill="#fff"
+        stroke="#1b1f3a"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <path d="M22 11h3M22 15h2M16 8v3" stroke="#1b1f3a" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function RankPips({ rank, size = 'sm' }: { rank: number; size?: 'sm' | 'md' }) {
+  const color = RANKS[(rank || 0) as 0].crystal;
+  return (
+    <span className={`flex ${size === 'sm' ? 'gap-[3px]' : 'gap-1.5'} px-0.5`} aria-hidden>
       {[1, 2, 3, 4, 5].map((i) => (
-        <span key={i} className={`${dim} rounded-sm ${i <= rank ? RANKS[rank as 1].pip : RANKS[0].pip}`} />
+        <span key={i} className={`crystal ${size === 'md' ? 'crystal-md' : ''} ${i <= rank ? 'crystal-on' : ''}`} style={{ ['--c' as string]: color }} />
       ))}
     </span>
   );

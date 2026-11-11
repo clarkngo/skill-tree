@@ -1,10 +1,15 @@
 import { useCallback, useEffect, useRef, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import type { GraphIndex } from '../lib/graphIndex';
+import type { LayoutDirection } from '../types';
 
 export interface KeyboardNavOptions {
   index: GraphIndex | null;
   focusedId: string | null;
   expanded: ReadonlySet<string>;
+  /** Arrow keys follow the layout: in TB, ↓ is the child axis and ←/→ the sibling axis. */
+  direction: LayoutDirection;
+  /** Called when a move has nowhere to go (leaf, root, only child). */
+  onBump?: () => void;
   drawerOpen: boolean;
   searchOpen: boolean;
   /** Move the roving focus. `pan` asks the canvas to center the node. */
@@ -24,10 +29,10 @@ function isTypingTarget(el: EventTarget | null) {
 }
 
 /**
- * Mindmap keyboard model:
- *   → / Tab           first child (expanding if needed)
- *   ← / Shift+Tab     parent
- *   ↓ / ↑             next / previous sibling (wraps)
+ * Mindmap keyboard model (horizontal layout; vertical swaps the arrow axes):
+ *   → / Tab           first child (expanding if needed)        [vertical: ↓]
+ *   ← / Shift+Tab     parent                                   [vertical: ↑]
+ *   ↓ / ↑             next / previous sibling (wraps)          [vertical: → / ←]
  *   Home / End        first / last sibling
  *   Enter / Space     open a skill's details, or toggle a realm / branch
  *   ⌘K / Ctrl+K / "/" open search
@@ -45,7 +50,7 @@ export function useKeyboardNav(opts: KeyboardNavOptions) {
   optsRef.current = opts;
 
   const onTreeKeyDown = useCallback((e: ReactKeyboardEvent<HTMLElement>) => {
-    const { index, focusedId, expanded, focusNode, setExpanded, openDrawer } = optsRef.current;
+    const { index, focusedId, expanded, direction, focusNode, setExpanded, openDrawer, onBump } = optsRef.current;
     if (!index || e.altKey || e.ctrlKey || e.metaKey) return;
     // React Flow's controls and minimap live inside the tree container; keys
     // pressed on those must keep their normal behavior.
@@ -78,25 +83,33 @@ export function useKeyboardNav(opts: KeyboardNavOptions) {
       return true;
     };
     const goSibling = (target: number) => {
-      if (siblings.length < 2) return;
+      if (siblings.length < 2) return onBump?.();
       focusNode(siblings[(target + siblings.length) % siblings.length], { pan: true });
     };
 
+    const vertical = direction === 'TB';
+    const key = {
+      ArrowRight: vertical ? 'next' : 'child',
+      ArrowLeft: vertical ? 'prev' : 'parent',
+      ArrowDown: vertical ? 'child' : 'next',
+      ArrowUp: vertical ? 'parent' : 'prev',
+    }[e.key] ?? e.key;
+
     let handled = true;
-    switch (e.key) {
-      case 'ArrowRight':
-        goChild();
+    switch (key) {
+      case 'child':
+        if (!goChild()) onBump?.();
         break;
-      case 'ArrowLeft':
-        goParent();
+      case 'parent':
+        if (!goParent()) onBump?.();
         break;
       case 'Tab':
         handled = e.shiftKey ? goParent() : goChild();
         break;
-      case 'ArrowDown':
+      case 'next':
         goSibling(pos + 1);
         break;
-      case 'ArrowUp':
+      case 'prev':
         goSibling(pos - 1);
         break;
       case 'Home':
