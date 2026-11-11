@@ -1,5 +1,8 @@
 {
-  "player": { "name": "Clark", "title": "Builder · Educator" },
+  "player": {
+    "name": "Clark",
+    "title": "Builder · Educator · Researcher"
+  },
   "realms": [
     {
       "id": "software",
@@ -9,54 +12,365 @@
       "children": [
         {
           "id": "web",
-          "label": "Web Development",
+          "label": "Web & Mobile Frontend",
           "children": [
-            { "id": "html-css", "label": "HTML & CSS", "rank": 4, "since": "2015", "tags": ["frontend"] },
-            { "id": "javascript", "label": "JavaScript", "rank": 4, "since": "2015", "tags": ["frontend", "language"] },
+            {
+              "id": "html-css",
+              "label": "HTML & CSS",
+              "rank": 4,
+              "tags": [
+                "frontend"
+              ]
+            },
+            {
+              "id": "javascript",
+              "label": "JavaScript",
+              "rank": 4,
+              "tags": [
+                "frontend",
+                "language"
+              ]
+            },
             {
               "id": "typescript",
               "label": "TypeScript",
               "rank": 3,
-              "requires": ["javascript"],
-              "tags": ["language"],
-              "next": ["Write a library with strict generics and publish types", "Read through the TS handbook's type-manipulation section"]
+              "requires": [
+                "javascript"
+              ],
+              "tags": [
+                "language"
+              ],
+              "next": [
+                "Write a library with strict generics and publish types"
+              ]
             },
             {
               "id": "react",
               "label": "React",
               "rank": 4,
-              "requires": ["javascript"],
+              "requires": [
+                "javascript"
+              ],
               "summary": "Component UIs, hooks, state, and rendering performance.",
-              "evidence": [{ "label": "Problem Atlas: keyboard-first React Flow map", "url": "https://clarkngo.github.io/problem-atlas/" }],
+              "notes": "Change-metadata table, search and validation UI at eBay (React + Ant Design); KPI/risk dashboard with Next.js and Chart.js.",
+              "evidence": [
+                {
+                  "label": "Problem Atlas: keyboard-first React Flow map",
+                  "url": "https://clarkngo.github.io/problem-atlas/"
+                }
+              ],
               "children": [
-                { "id": "react-flow", "label": "React Flow / node canvases", "rank": 3, "requires": ["react"], "since": "2026" },
-                { "id": "a11y", "label": "Accessibility (ARIA, keyboard)", "rank": 3, "requires": ["html-css"], "next": ["Audit a site with a real screen reader end to end"] }
+                {
+                  "id": "react-flow",
+                  "label": "React Flow / node canvases",
+                  "rank": 3,
+                  "requires": [
+                    "react"
+                  ],
+                  "since": "2026"
+                },
+                {
+                  "id": "a11y",
+                  "label": "Accessibility (ARIA, keyboard)",
+                  "rank": 3,
+                  "requires": [
+                    "html-css"
+                  ],
+                  "next": [
+                    "Audit a site with a real screen reader end to end"
+                  ]
+                }
               ]
             },
-            { "id": "tailwind", "label": "Tailwind CSS", "rank": 3, "requires": ["html-css"] },
-            { "id": "vite", "label": "Vite & bundlers", "rank": 2, "requires": ["javascript"] }
+            {
+              "id": "nextjs",
+              "label": "Next.js",
+              "rank": 3,
+              "requires": [
+                "react"
+              ]
+            },
+            {
+              "id": "react-native",
+              "label": "React Native",
+              "rank": 2,
+              "requires": [
+                "react"
+              ],
+              "summary": "Mobile fund-transfer prototype (Flask + React Native); taught Mobile Full-Stack Development workshop (2025)."
+            },
+            {
+              "id": "angular",
+              "label": "Angular",
+              "rank": 2,
+              "requires": [
+                "typescript"
+              ],
+              "summary": "MEAN stack: built apps and taught full-stack courses with it."
+            },
+            {
+              "id": "tailwind",
+              "label": "Tailwind CSS",
+              "rank": 3,
+              "requires": [
+                "html-css"
+              ]
+            },
+            {
+              "id": "vite",
+              "label": "Vite & bundlers",
+              "rank": 2,
+              "requires": [
+                "javascript"
+              ]
+            }
           ]
         },
         {
           "id": "backend",
-          "label": "Backend & Data",
+          "label": "Backend",
           "children": [
-            { "id": "python", "label": "Python", "rank": 3, "tags": ["language"] },
-            { "id": "node", "label": "Node.js", "rank": 3, "requires": ["javascript"] },
-            { "id": "sql", "label": "SQL & relational modeling", "rank": 3 },
-            { "id": "apis", "label": "REST API design", "rank": 3, "requires": ["node"] },
-            { "id": "rust", "label": "Rust", "rank": 0, "tags": ["language"], "summary": "Someday." }
+            {
+              "id": "java",
+              "label": "Java",
+              "rank": 4,
+              "since": "2020",
+              "tags": [
+                "language"
+              ],
+              "summary": "Primary language at eBay, Worldwide American and CloudEagle.AI."
+            },
+            {
+              "id": "spring",
+              "label": "Spring",
+              "rank": 4,
+              "requires": [
+                "java"
+              ],
+              "summary": "Spring Boot microservices, Spring Batch pipelines, Spring Cloud.",
+              "notes": "eBay: Spring Batch pipelines from ServiceNow into Elasticsearch; cut code duplication from ~20% to 5% with shared libraries.",
+              "children": [
+                {
+                  "id": "spring-batch",
+                  "label": "Spring Batch",
+                  "rank": 3,
+                  "requires": [
+                    "spring"
+                  ]
+                },
+                {
+                  "id": "spring-cloud",
+                  "label": "Spring Cloud (Netflix stack)",
+                  "rank": 3,
+                  "requires": [
+                    "spring"
+                  ],
+                  "summary": "API gateway, discovery, config and admin servers at Worldwide American."
+                }
+              ]
+            },
+            {
+              "id": "python",
+              "label": "Python",
+              "rank": 4,
+              "tags": [
+                "language"
+              ],
+              "evidence": [
+                {
+                  "label": "Data Structures and Algorithms with Python workshop (2019)"
+                }
+              ]
+            },
+            {
+              "id": "fastapi",
+              "label": "FastAPI",
+              "rank": 3,
+              "requires": [
+                "python"
+              ]
+            },
+            {
+              "id": "flask",
+              "label": "Flask",
+              "rank": 3,
+              "requires": [
+                "python"
+              ]
+            },
+            {
+              "id": "node",
+              "label": "Node.js & Express",
+              "rank": 3,
+              "requires": [
+                "javascript"
+              ]
+            },
+            {
+              "id": "apis",
+              "label": "REST API design",
+              "rank": 4,
+              "requires": [
+                "node"
+              ]
+            },
+            {
+              "id": "rust",
+              "label": "Rust",
+              "rank": 0,
+              "tags": [
+                "language"
+              ],
+              "summary": "Someday."
+            }
+          ]
+        },
+        {
+          "id": "data-stores",
+          "label": "Data Stores & Messaging",
+          "children": [
+            {
+              "id": "sql",
+              "label": "SQL & MySQL",
+              "rank": 3
+            },
+            {
+              "id": "mongodb",
+              "label": "MongoDB",
+              "rank": 3,
+              "summary": "CloudEagle.AI: halved SaaS data-ingestion time into MongoDB."
+            },
+            {
+              "id": "elasticsearch",
+              "label": "Elasticsearch / OpenSearch",
+              "rank": 3,
+              "requires": [
+                "sql"
+              ],
+              "summary": "Batch pipelines and cluster-management tooling at eBay."
+            },
+            {
+              "id": "rabbitmq",
+              "label": "RabbitMQ",
+              "rank": 2,
+              "requires": [
+                "microservices"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "architecture",
+          "label": "Architecture",
+          "children": [
+            {
+              "id": "microservices",
+              "label": "Microservices",
+              "rank": 3,
+              "requires": [
+                "apis"
+              ],
+              "summary": "Designed a microservices platform at Worldwide American; cut backend response time by 80% with async processing and caching."
+            },
+            {
+              "id": "serverless",
+              "label": "Serverless architecture",
+              "rank": 3,
+              "requires": [
+                "aws"
+              ],
+              "evidence": [
+                {
+                  "label": "Ngo et al. (2020), Journal of The Colloquium for Information Systems Security Education 7(1)"
+                }
+              ]
+            },
+            {
+              "id": "system-design",
+              "label": "System design",
+              "rank": 3,
+              "requires": [
+                "apis",
+                "sql"
+              ]
+            }
           ]
         },
         {
           "id": "craft",
           "label": "Engineering Craft",
           "children": [
-            { "id": "git", "label": "Git & GitHub", "rank": 4 },
-            { "id": "ci", "label": "CI/CD (GitHub Actions)", "rank": 2, "requires": ["git"] },
-            { "id": "testing", "label": "Automated testing", "rank": 2, "learning": true, "next": ["Add Playwright tests to Problem Atlas keyboard nav"] },
-            { "id": "system-design", "label": "System design", "rank": 2, "requires": ["apis", "sql"] }
+            {
+              "id": "git",
+              "label": "Git & GitHub",
+              "rank": 4
+            },
+            {
+              "id": "ci",
+              "label": "CI/CD (GitHub Actions, Jenkins)",
+              "rank": 3,
+              "requires": [
+                "git"
+              ]
+            },
+            {
+              "id": "docker",
+              "label": "Docker",
+              "rank": 3
+            },
+            {
+              "id": "testing",
+              "label": "Automated testing",
+              "rank": 2,
+              "learning": true,
+              "next": [
+                "Add Playwright tests to Problem Atlas keyboard nav"
+              ]
+            },
+            {
+              "id": "oncall",
+              "label": "On-call & root-cause analysis",
+              "rank": 3,
+              "summary": "eBay Ads production on-call rotation; linked revenue or metric drops to recent changes in under 10 minutes instead of hours."
+            }
           ]
+        }
+      ]
+    },
+    {
+      "id": "cloud",
+      "label": "Cloud & Infrastructure",
+      "color": "indigo",
+      "summary": "Where the code lives.",
+      "children": [
+        {
+          "id": "aws",
+          "label": "AWS",
+          "rank": 3,
+          "since": "2020",
+          "summary": "AWS Certified Cloud Practitioner (2020). EC2, RDS, Lambda, S3, CloudFront, Cognito."
+        },
+        {
+          "id": "linux",
+          "label": "Linux administration",
+          "rank": 4,
+          "since": "2020",
+          "summary": "CompTIA Linux+ (2020); taught Linux system administration."
+        },
+        {
+          "id": "networking",
+          "label": "Networking",
+          "rank": 2,
+          "requires": [
+            "linux"
+          ]
+        },
+        {
+          "id": "azure",
+          "label": "Azure",
+          "rank": 1,
+          "summary": "Serverless bookstore with Azure Functions and Cosmos DB."
         }
       ]
     },
@@ -70,62 +384,555 @@
           "id": "llm-apps",
           "label": "LLM Applications",
           "children": [
-            { "id": "prompting", "label": "Prompt engineering", "rank": 4, "since": "2023" },
-            { "id": "rag", "label": "RAG & retrieval", "rank": 3, "requires": ["prompting", "python"] },
+            {
+              "id": "prompting",
+              "label": "Prompt engineering",
+              "rank": 4,
+              "since": "2023"
+            },
+            {
+              "id": "rag",
+              "label": "RAG & retrieval",
+              "rank": 4,
+              "since": "2024",
+              "requires": [
+                "prompting",
+                "python"
+              ],
+              "summary": "RAG chat systems with Gemma via Ollama, ChromaDB, FastAPI; taught the AI Engineer Quickstart workshop.",
+              "evidence": [
+                {
+                  "label": "Enterprise AI course poster, UKC 2024"
+                }
+              ]
+            },
+            {
+              "id": "local-models",
+              "label": "Open-weight models (Ollama)",
+              "rank": 3,
+              "requires": [
+                "rag"
+              ]
+            },
             {
               "id": "agents",
               "label": "Agents & tool use",
-              "rank": 2,
+              "rank": 3,
               "learning": true,
-              "requires": ["prompting", "apis"],
-              "notes": "Claude Code, MCP servers, skills. Learning by building with them daily.",
-              "next": ["Build and ship an MCP server", "Write an eval suite for an agent workflow"]
+              "requires": [
+                "prompting",
+                "apis"
+              ],
+              "summary": "Multi-agent research framework with Google ADK and MCP.",
+              "next": [
+                "Write an eval suite for an agent workflow"
+              ]
             },
-            { "id": "mcp", "label": "Model Context Protocol", "rank": 2, "requires": ["agents"] },
-            { "id": "evals", "label": "Evals & LLM-as-judge", "rank": 0, "requires": ["agents"] },
-            { "id": "fine-tuning", "label": "Fine-tuning", "rank": 0, "requires": ["ml-basics"] }
+            {
+              "id": "mcp",
+              "label": "Model Context Protocol",
+              "rank": 3,
+              "requires": [
+                "agents"
+              ]
+            },
+            {
+              "id": "mlops",
+              "label": "MLOps (MLflow)",
+              "rank": 2,
+              "requires": [
+                "ci",
+                "rag"
+              ]
+            },
+            {
+              "id": "fine-tuning",
+              "label": "Fine-tuning",
+              "rank": 0,
+              "requires": [
+                "ml-basics"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ai-safety",
+          "label": "AI Safety & Evaluation",
+          "children": [
+            {
+              "id": "evals",
+              "label": "Evals & experiment harnesses",
+              "rank": 3,
+              "learning": true,
+              "requires": [
+                "agents"
+              ],
+              "summary": "648 logged runs across three 7–8B models, three attacks and four defenses, eight replicates each.",
+              "evidence": [
+                {
+                  "label": "Agent-Poison (2026)",
+                  "url": "https://clarkngo.github.io/agent-poison"
+                }
+              ]
+            },
+            {
+              "id": "prompt-injection",
+              "label": "Prompt-injection attacks & defenses",
+              "rank": 3,
+              "requires": [
+                "agents",
+                "security-fundamentals"
+              ],
+              "evidence": [
+                {
+                  "label": "Agent-Poison (2026)",
+                  "url": "https://clarkngo.github.io/agent-poison"
+                }
+              ]
+            },
+            {
+              "id": "agent-threat-modeling",
+              "label": "Agentic threat modeling (OWASP ASI)",
+              "rank": 3,
+              "requires": [
+                "agents",
+                "security-fundamentals"
+              ],
+              "evidence": [
+                {
+                  "label": "Threat model on Google ADK agents, CISSE 2025"
+                }
+              ]
+            }
           ]
         },
         {
           "id": "ml",
-          "label": "ML Foundations",
+          "label": "ML & Data Science",
           "children": [
-            { "id": "ml-basics", "label": "Classical ML", "rank": 0, "requires": ["python", "stats"] },
-            { "id": "stats", "label": "Statistics & probability", "rank": 2 },
-            { "id": "linear-algebra", "label": "Linear algebra", "rank": 1 }
+            {
+              "id": "data-science",
+              "label": "Data science",
+              "rank": 2,
+              "learning": true,
+              "since": "2025",
+              "summary": "M.S. in Data Science, City University of Seattle (Oct 2025 – expected Jun 2027)."
+            },
+            {
+              "id": "ml-basics",
+              "label": "Classical ML",
+              "rank": 2,
+              "requires": [
+                "python",
+                "stats"
+              ]
+            },
+            {
+              "id": "stats",
+              "label": "Statistics & probability",
+              "rank": 2,
+              "learning": true
+            },
+            {
+              "id": "linear-algebra",
+              "label": "Linear algebra",
+              "rank": 1
+            }
           ]
         },
         {
           "id": "ai-strategy",
           "label": "AI Strategy",
           "children": [
-            { "id": "ai-fit", "label": "Diagnosing AI vs. process vs. automation", "rank": 4, "evidence": [{ "label": "Problem Atlas", "url": "https://clarkngo.github.io/problem-atlas/" }] },
-            { "id": "privacy", "label": "Data privacy (FERPA, HIPAA…)", "rank": 2, "requires": ["ai-fit"] }
+            {
+              "id": "ai-fit",
+              "label": "Diagnosing AI vs. process vs. automation",
+              "rank": 4,
+              "evidence": [
+                {
+                  "label": "Problem Atlas: keyboard-first React Flow map",
+                  "url": "https://clarkngo.github.io/problem-atlas/"
+                }
+              ]
+            },
+            {
+              "id": "ai-program-strategy",
+              "label": "AI program & curriculum strategy",
+              "rank": 3,
+              "requires": [
+                "ai-fit",
+                "curriculum"
+              ],
+              "summary": "Co-authored the B.S. in Artificial Intelligence proposal and the strategy briefing for department leadership."
+            },
+            {
+              "id": "privacy",
+              "label": "Data privacy (FERPA, HIPAA…)",
+              "rank": 2,
+              "requires": [
+                "ai-fit"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "label": "Cybersecurity",
+      "color": "rose",
+      "summary": "Keeping systems and agents trustworthy.",
+      "children": [
+        {
+          "id": "security-fundamentals",
+          "label": "Security fundamentals",
+          "rank": 3,
+          "since": "2018",
+          "summary": "Taught cybersecurity; president of the CityU Cybersecurity Club."
+        },
+        {
+          "id": "devsecops",
+          "label": "DevSecOps",
+          "rank": 3,
+          "requires": [
+            "security-fundamentals",
+            "ci"
+          ]
+        },
+        {
+          "id": "secure-coding",
+          "label": "Secure coding",
+          "rank": 2,
+          "requires": [
+            "security-fundamentals"
+          ]
+        },
+        {
+          "id": "risk-assessment",
+          "label": "Security risk assessment & policy",
+          "rank": 2,
+          "requires": [
+            "security-fundamentals"
+          ],
+          "summary": "CIS benchmark assessment for MySQL; risk assessment and policy for an investment bank (2019)."
+        }
+      ]
+    },
+    {
+      "id": "research",
+      "label": "Research",
+      "color": "teal",
+      "summary": "Asking careful questions about people and AI.",
+      "children": [
+        {
+          "id": "publishing",
+          "label": "Academic publishing",
+          "rank": 3,
+          "since": "2019",
+          "evidence": [
+            {
+              "label": "Serverless computing architecture security (JCISSE, 2020)"
+            },
+            {
+              "label": "Decreasing the barrier to entry for open-source full-stack web development (CONISAR, 2021)"
+            },
+            {
+              "label": "FinTech and finance professionals (ICOAF, 2019)"
+            }
+          ]
+        },
+        {
+          "id": "research-design",
+          "label": "Research & experiment design",
+          "rank": 3,
+          "learning": true,
+          "requires": [
+            "evals"
+          ],
+          "summary": "ThinkCheck: a multilingual (English/Taglish) audit of AI coding assistants. Designed; pilot not yet run.",
+          "next": [
+            "Run the ThinkCheck pilot (720 responses)"
+          ]
+        },
+        {
+          "id": "conference-talks",
+          "label": "Conference presentations",
+          "rank": 3,
+          "requires": [
+            "public-speaking"
+          ],
+          "summary": "CISSE 2019 (first student-track talk from CityU's School of Technology & Computing) and CISSE 2025."
+        },
+        {
+          "id": "ai-in-education",
+          "label": "Generative AI in computing education",
+          "rank": 3,
+          "learning": true,
+          "requires": [
+            "teaching",
+            "agents"
           ]
         }
       ]
     },
     {
       "id": "people",
-      "label": "Teaching & Communication",
+      "label": "Teaching & Leadership",
       "color": "emerald",
       "children": [
-        { "id": "teaching", "label": "Teaching technical topics", "rank": 4 },
-        { "id": "curriculum", "label": "Curriculum design", "rank": 3, "requires": ["teaching"] },
-        { "id": "writing", "label": "Technical writing", "rank": 3 },
-        { "id": "public-speaking", "label": "Public speaking", "rank": 3 },
-        { "id": "mentoring", "label": "Mentoring", "rank": 3, "requires": ["teaching"] }
+        {
+          "id": "teaching-branch",
+          "label": "Teaching",
+          "children": [
+            {
+              "id": "teaching",
+              "label": "Teaching technical topics",
+              "rank": 4,
+              "since": "2019",
+              "summary": "11 course sections (2020–2021): full-stack web, Linux, cybersecurity, ITSM, information systems; graduate CS 506 and CS 628."
+            },
+            {
+              "id": "curriculum",
+              "label": "Curriculum design",
+              "rank": 4,
+              "requires": [
+                "teaching"
+              ],
+              "summary": "Designed AI 410: AI Engineering from scratch; co-designed the doctoral Enterprise AI course (DIT637)."
+            },
+            {
+              "id": "workshops",
+              "label": "Workshops & bootcamps",
+              "rank": 4,
+              "requires": [
+                "teaching"
+              ],
+              "summary": "KOCSEA Vibe AI Coding Camp (2025), AI Engineer Quickstart (2024), Full-Stack and Mobile Full-Stack (2025)."
+            },
+            {
+              "id": "mentoring",
+              "label": "Mentoring",
+              "rank": 4,
+              "summary": "CodeDay Labs (2024), Empower Youth Network (2023), CodeDay Washington (2019)."
+            }
+          ]
+        },
+        {
+          "id": "communication",
+          "label": "Communication",
+          "children": [
+            {
+              "id": "writing",
+              "label": "Technical writing",
+              "rank": 3,
+              "summary": "25 technical articles on freeCodeCamp, Medium and Dev.to."
+            },
+            {
+              "id": "video",
+              "label": "Video tutorials",
+              "rank": 2,
+              "summary": "24 YouTube tutorials, about 79,000 views."
+            },
+            {
+              "id": "public-speaking",
+              "label": "Public speaking & hosting",
+              "rank": 3,
+              "summary": "Organized and hosted 16 invited industry talks (2017–2020)."
+            }
+          ]
+        },
+        {
+          "id": "leadership",
+          "label": "Leadership",
+          "children": [
+            {
+              "id": "program-management",
+              "label": "Program management",
+              "rank": 3,
+              "since": "2020",
+              "summary": "AWS Military Apprenticeship Program (Jan 2020 – Mar 2021): two 17-week cohorts, 40 of 43 moved on to on-the-job training with AWS; cut operating costs 40% ($72,000)."
+            },
+            {
+              "id": "team-leadership",
+              "label": "Leading teams",
+              "rank": 3,
+              "summary": "Led 5 instructors and 5 teaching assistants."
+            },
+            {
+              "id": "it-consulting",
+              "label": "IT consulting",
+              "rank": 2,
+              "requires": [
+                "git"
+              ],
+              "summary": "Liberty Paper (2023): knowledge base, Git/GitHub workflows, ServiceDesk, ERPNext, VPN."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "business",
+      "label": "Business & Finance",
+      "color": "amber",
+      "summary": "Money, markets and making a case.",
+      "children": [
+        {
+          "id": "finance",
+          "label": "Finance",
+          "rank": 3,
+          "since": "2011",
+          "summary": "B.S. in Commerce, Management of Financial Institutions (De La Salle University, 2011)."
+        },
+        {
+          "id": "financial-analysis",
+          "label": "Financial analysis",
+          "rank": 3,
+          "requires": [
+            "finance"
+          ],
+          "summary": "Financial Analyst (Mandarin), S&P Capital IQ and Thomson Reuters, 2011–2016."
+        },
+        {
+          "id": "business-strategy",
+          "label": "Business strategy",
+          "rank": 3,
+          "since": "2024",
+          "summary": "MBA (GPA 3.9), City University of Seattle, Jan 2024 – Sep 2025. 1st place, MBA Case Competition (2018)."
+        },
+        {
+          "id": "entrepreneurship",
+          "label": "Entrepreneurship & pitching",
+          "rank": 2,
+          "requires": [
+            "business-strategy"
+          ],
+          "summary": "1st place Net Impact SET (Tuklas, 2024); 2nd Startup Weekend Seattle (2019); 2nd AngelHack Seattle (2018)."
+        },
+        {
+          "id": "fintech",
+          "label": "FinTech & blockchain",
+          "rank": 2,
+          "requires": [
+            "finance"
+          ],
+          "evidence": [
+            {
+              "label": "Crossing the chasm between FinTech and finance professionals (ICOAF, 2019)"
+            }
+          ]
+        },
+        {
+          "id": "sales",
+          "label": "Sales",
+          "rank": 3,
+          "summary": "Insurance sales: 2.5× the annual quota for six years."
+        }
       ]
     },
     {
       "id": "life",
-      "label": "Life Skills",
-      "color": "amber",
+      "label": "Life & Culture",
+      "color": "orange",
       "summary": "Everything outside work that's worth getting better at.",
       "children": [
-        { "id": "cooking", "label": "Cooking", "rank": 2, "next": ["Learn five mother sauces"] },
-        { "id": "fitness", "label": "Fitness", "rank": 2 },
-        { "id": "language-learning", "label": "A new language", "rank": 0 }
+        {
+          "id": "languages",
+          "label": "Languages",
+          "children": [
+            {
+              "id": "english",
+              "label": "English",
+              "rank": 5
+            },
+            {
+              "id": "filipino",
+              "label": "Filipino (Tagalog)",
+              "rank": 5
+            },
+            {
+              "id": "mandarin",
+              "label": "Mandarin",
+              "rank": 4,
+              "summary": "Professional working proficiency."
+            },
+            {
+              "id": "hokkien",
+              "label": "Hokkien",
+              "rank": 3
+            },
+            {
+              "id": "translation",
+              "label": "Chinese → English translation",
+              "rank": 4,
+              "requires": [
+                "mandarin",
+                "english"
+              ],
+              "summary": "1,166,110 words of Chinese financial filings translated with an \"A\" rating; built a Simplified/Traditional glossary."
+            }
+          ]
+        },
+        {
+          "id": "sports",
+          "label": "Coaching",
+          "children": [
+            {
+              "id": "volleyball-coaching",
+              "label": "Volleyball coaching",
+              "rank": 5,
+              "since": "2009",
+              "summary": "King County 2A champions 2021 and 2022; earlier FCAAF and PAYA championships in Manila. Serving and blocking specialist."
+            },
+            {
+              "id": "basketball-coaching",
+              "label": "Basketball coaching",
+              "rank": 2
+            }
+          ]
+        },
+        {
+          "id": "music",
+          "label": "Music",
+          "children": [
+            {
+              "id": "dj",
+              "label": "DJing",
+              "rank": 4,
+              "since": "2015",
+              "summary": "Resident DJ in Manila (2015–2017); radio guest; weddings and corporate events.",
+              "evidence": [
+                {
+                  "label": "Mixcloud",
+                  "url": "https://mixcloud.com/djjasonclark/"
+                }
+              ]
+            },
+            {
+              "id": "ableton",
+              "label": "Ableton production",
+              "rank": 3,
+              "requires": [
+                "dj"
+              ],
+              "summary": "Berklee College of Music, Ableton Specialist (2016)."
+            }
+          ]
+        },
+        {
+          "id": "cooking",
+          "label": "Cooking",
+          "rank": 2,
+          "summary": "Kitchen stints at a noodle bar and a sushi restaurant (2017).",
+          "next": [
+            "Learn five mother sauces"
+          ]
+        },
+        {
+          "id": "fitness",
+          "label": "Fitness",
+          "rank": 2
+        }
       ]
     }
   ]
