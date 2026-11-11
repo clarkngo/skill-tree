@@ -20,6 +20,7 @@ import { SearchModal } from './components/SearchModal';
 import { DetailDrawer } from './components/DetailDrawer';
 import { Toolbar } from './components/Toolbar';
 import { Legend } from './components/Legend';
+import { play } from './lib/sfx';
 
 const nodeTypes = { skill: SkillNodeCard };
 
@@ -47,13 +48,13 @@ export default function App() {
 
   if (error) {
     return (
-      <div className="flex h-full items-center justify-center p-6 text-center text-slate-700 dark:text-slate-300">
+      <div className="starfield flex h-full items-center justify-center p-6 text-center">
         Couldn’t load the skill tree ({error}).
       </div>
     );
   }
   if (!index) {
-    return <div className="flex h-full items-center justify-center text-slate-500">Loading skill tree…</div>;
+    return <div className="starfield flex h-full items-center justify-center text-indigo-100">Now loading…</div>;
   }
   return (
     <ReactFlowProvider>
@@ -163,6 +164,8 @@ function SkillTree({ index }: { index: GraphIndex }) {
     index,
     focusedId,
     expanded,
+    direction,
+    onBump: () => play('bump'),
     drawerOpen: drawerId !== null,
     searchOpen,
     focusNode,
@@ -172,6 +175,23 @@ function SkillTree({ index }: { index: GraphIndex }) {
     openSearch: () => setSearchOpen(true),
     closeSearch: () => setSearchOpen(false),
   });
+
+  // ── Sound ──────────────────────────────────────────────────────────
+  // One sound per state change, picked by priority, so a single action that
+  // changes several things (e.g. a search pick closes search and opens the
+  // drawer) doesn't stack sounds.
+  const prevUi = useRef({ focusedId, drawerId, searchOpen, expandedSize: expanded.size });
+  useEffect(() => {
+    const prev = prevUi.current;
+    const now = { focusedId, drawerId, searchOpen, expandedSize: expanded.size };
+    prevUi.current = now;
+    if (now.drawerId && now.drawerId !== prev.drawerId) play('confirm');
+    else if (now.searchOpen && !prev.searchOpen) play('open');
+    else if ((prev.drawerId && !now.drawerId) || (prev.searchOpen && !now.searchOpen)) play('cancel');
+    else if (now.expandedSize > prev.expandedSize) play('expand');
+    else if (now.expandedSize < prev.expandedSize) play('collapse');
+    else if (now.focusedId !== prev.focusedId) play(now.focusedId ? 'cursor' : 'cancel');
+  }, [focusedId, drawerId, searchOpen, expanded.size]);
 
   // ── Layout ─────────────────────────────────────────────────────────────
   const visible = useMemo(() => visibleIds(index, expanded), [index, expanded]);
@@ -321,14 +341,20 @@ function SkillTree({ index }: { index: GraphIndex }) {
       <Toolbar
         index={index}
         direction={direction}
-        onDirection={setDirection}
+        onDirection={(d) => {
+          if (d !== direction) play('confirm');
+          setDirection(d);
+        }}
         onSearch={() => setSearchOpen(true)}
         onExpandAll={expandAll}
         onCollapseAll={collapseAll}
-        onFit={() => rf.fitView({ duration: 400, padding: 0.1 })}
+        onFit={() => {
+          play('confirm');
+          rf.fitView({ duration: 400, padding: 0.1 });
+        }}
       />
 
-      <main className="relative min-h-0 flex-1">
+      <main className="starfield relative min-h-0 flex-1">
         <NodeActionsContext.Provider value={nodeActions}>
           <div
             ref={treeRef}
@@ -343,7 +369,7 @@ function SkillTree({ index }: { index: GraphIndex }) {
               const target = lastFocused.current && visible.includes(lastFocused.current) ? lastFocused.current : index.rootIds[0];
               if (target) focusNode(target, { pan: true });
             }}
-            className="h-full w-full outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-indigo-500/40"
+            className="h-full w-full outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-gold-300/40"
           >
             <ReactFlow
               nodes={nodes}
@@ -359,9 +385,9 @@ function SkillTree({ index }: { index: GraphIndex }) {
               fitViewOptions={{ padding: 0.15, maxZoom: 1 }}
               minZoom={0.15}
               maxZoom={1.75}
-              colorMode="system"
+              colorMode="dark"
             >
-              <Background gap={24} size={1} />
+              <Background gap={32} size={1} color="rgba(165,180,252,0.18)" />
               <Controls showInteractive={false} position="bottom-right" />
               <MiniMap
                 pannable
@@ -370,15 +396,16 @@ function SkillTree({ index }: { index: GraphIndex }) {
                 className="!hidden md:!block"
                 nodeColor={(n) => {
                   const d = (n as SkillFlowNode).data;
-                  return d.state === 'locked' ? 'rgb(148 163 184)' : ACCENTS[d.accent].hex;
+                  return d.state === 'locked' ? 'rgb(71 85 105)' : ACCENTS[d.accent].hex;
                 }}
                 nodeStrokeWidth={3}
+                nodeBorderRadius={20}
               />
             </ReactFlow>
           </div>
         </NodeActionsContext.Provider>
 
-        <Legend />
+        <Legend direction={direction} />
       </main>
 
       {drawerNode && (

@@ -37,7 +37,7 @@ Everything lives in [`public/data/skills.json`](public/data/skills.json) as a **
   "rank": 2,                         // 0–5. Having a rank makes it a skill.
   "learning": true,                  // shows ⚔ Learning and puts it in the quest log (search with empty query)
   "since": "2024",
-  "requires": ["prompting", "apis"], // prerequisites, drawn as dashed gold links when focused
+  "requires": ["prompting", "apis"], // prerequisites, drawn as dashed pink links when focused
   "summary": "…",
   "notes": "…",                      // free-form field notes
   "next": ["Build and ship an MCP server"],                 // quests to reach the next rank

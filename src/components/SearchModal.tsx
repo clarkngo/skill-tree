@@ -3,7 +3,8 @@ import Fuse from 'fuse.js';
 import type { NodeKind, Rank, SkillState } from '../types';
 import type { GraphIndex } from '../lib/graphIndex';
 import { ACCENTS, KIND_BADGE, KIND_LABEL, RANKS } from '../lib/theme';
-import { LockIcon, RankPips } from './SkillNodeCard';
+import { HandCursor, LockIcon, RankPips } from './SkillNodeCard';
+import { play } from '../lib/sfx';
 
 interface SearchDoc {
   id: string;
@@ -76,8 +77,11 @@ export function SearchModal({ index, onSelect, onClose }: Props) {
 
   useEffect(() => setActive(0), [query]);
   useEffect(() => inputRef.current?.focus(), []);
+  const firstActive = useRef(true);
   useEffect(() => {
     listRef.current?.querySelector(`[data-idx="${active}"]`)?.scrollIntoView({ block: 'nearest' });
+    if (firstActive.current) firstActive.current = false;
+    else play('cursor');
   }, [active]);
 
   const choose = (i: number) => {
@@ -111,24 +115,24 @@ export function SearchModal({ index, onSelect, onClose }: Props) {
   };
 
   const heading = (label: string) => (
-    <li role="presentation" className="px-3 pb-1 pt-2 text-xs font-medium uppercase tracking-wide text-slate-400">
+    <li role="presentation" className="label-gold px-3 pb-1 pt-2 text-xs">
       {label}
     </li>
   );
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center bg-slate-950/40 px-4 pt-[12vh] backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-start justify-center bg-[#03051a]/60 px-4 pt-[12vh]"
       onMouseDown={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Search skills"
-        className="flex max-h-[70vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900"
+        className="win flex max-h-[70vh] w-full max-w-xl flex-col overflow-hidden animate-[window-pop_160ms_ease-out]"
       >
-        <div className="flex items-center gap-2 border-b border-slate-200 px-4 dark:border-slate-700">
-          <svg viewBox="0 0 20 20" className="h-4 w-4 shrink-0 text-slate-400" aria-hidden>
+        <div className="flex items-center gap-2 border-b border-frame/30 px-4">
+          <svg viewBox="0 0 20 20" className="h-4 w-4 shrink-0 text-gold-300" aria-hidden>
             <path fill="currentColor" d="M8.5 3a5.5 5.5 0 014.38 8.83l3.65 3.64-1.06 1.06-3.64-3.65A5.5 5.5 0 118.5 3zm0 1.5a4 4 0 100 8 4 4 0 000-8z" />
           </svg>
           <input
@@ -141,15 +145,15 @@ export function SearchModal({ index, onSelect, onClose }: Props) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder="Search skills, or try “expert”, “ready”, “learning”…"
-            className="h-14 w-full bg-transparent text-base text-slate-900 outline-none placeholder:text-slate-400 dark:text-slate-100"
+            placeholder="Search abilities, or try “expert”, “ready”, “learning”…"
+            className="h-14 w-full bg-transparent text-base text-white outline-none placeholder:text-indigo-200/60"
           />
-          <kbd className="hidden rounded border border-slate-300 px-1.5 text-[11px] text-slate-500 sm:block dark:border-slate-600">Esc</kbd>
+          <kbd className="win-inset hidden px-1.5 text-[11px] text-gold-200 sm:block">Esc</kbd>
         </div>
 
         <ul ref={listRef} id={listId} role="listbox" aria-label="Results" className="overflow-y-auto p-2">
           {results.length === 0 && (
-            <li role="presentation" className="px-3 py-8 text-center text-sm text-slate-500">
+            <li role="presentation" className="px-3 py-8 text-center text-sm text-indigo-100/80">
               {query.trim() ? `No matches for “${query}”` : 'Nothing in the quest log. Mark a skill "learning": true to track it here.'}
             </li>
           )}
@@ -164,34 +168,35 @@ export function SearchModal({ index, onSelect, onClose }: Props) {
                 aria-selected={i === active}
                 onMouseMove={() => setActive(i)}
                 onClick={() => choose(i)}
-                className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 ${i === active ? 'bg-indigo-50 dark:bg-indigo-950/60' : ''}`}
+                className={`relative flex cursor-pointer items-center gap-3 rounded-md py-2 pl-9 pr-3 ${i === active ? 'bg-white/10' : ''}`}
               >
-                <span className={`h-2 w-2 shrink-0 rounded-full ${ACCENTS[index.accent.get(r.id)!].dot}`} aria-hidden />
+                {i === active && <HandCursor className="absolute left-1 top-1/2 h-4 w-6 -translate-y-1/2" />}
+                <span className={`h-2 w-2 shrink-0 rotate-45 ${ACCENTS[index.accent.get(r.id)!].dot}`} aria-hidden />
                 <span className="min-w-0 flex-1">
-                  <span className={`block truncate text-sm font-medium ${r.state === 'locked' ? 'text-slate-500' : 'text-slate-900 dark:text-slate-100'}`}>
+                  <span className={`block truncate text-sm font-medium ${r.state === 'locked' ? 'text-slate-400' : 'text-white'}`}>
                     {r.label}
                   </span>
-                  {r.path && <span className="block truncate text-xs text-slate-500 dark:text-slate-400">{r.path}</span>}
+                  {r.path && <span className="block truncate text-xs text-indigo-100/70">{r.path}</span>}
                 </span>
                 {r.kind === 'skill' ? (
                   r.state === 'locked' ? (
                     <LockIcon className="h-3 w-3 shrink-0 text-slate-400" />
                   ) : r.state === 'available' ? (
-                    <span className="shrink-0 rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-900 dark:bg-emerald-900/60 dark:text-emerald-100">
+                    <span className="shrink-0 rounded-sm border border-emerald-300/70 bg-emerald-950/70 px-1.5 py-0.5 text-[10px] text-emerald-200">
                       Ready
                     </span>
                   ) : (
                     <RankPips rank={r.rank} />
                   )
                 ) : (
-                  <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${KIND_BADGE[r.kind]}`}>{KIND_LABEL[r.kind]}</span>
+                  <span className={`shrink-0 rounded-sm px-1.5 py-0.5 text-[10px] uppercase ${KIND_BADGE[r.kind]}`}>{KIND_LABEL[r.kind]}</span>
                 )}
               </li>
             </Fragment>
           ))}
         </ul>
 
-        <div className="flex gap-4 border-t border-slate-200 px-4 py-2 text-[11px] text-slate-500 dark:border-slate-700">
+        <div className="flex gap-4 border-t border-frame/30 px-4 py-2 text-[11px] text-indigo-100/70">
           <span>
             <kbd className="font-sans">↑↓</kbd> move
           </span>

@@ -1,5 +1,24 @@
 @import 'tailwindcss';
 
+/* ── JRPG theme tokens ────────────────────────────────────────────────────
+   Classic console-RPG menu look: deep-blue gradient windows with a silver
+   bevelled frame, white text with a hard drop shadow, gold highlights, and
+   a pointing-glove cursor. The theme is always "night", so it ignores the
+   OS light/dark setting on purpose. */
+@theme {
+  --font-display: 'Cinzel', 'Trajan Pro', Georgia, serif;
+  --font-pixel: 'DotGothic16', ui-monospace, 'SFMono-Regular', monospace;
+  --color-gold-200: #fdf2c4;
+  --color-gold-300: #fde68a;
+  --color-gold-400: #f5c84c;
+  --color-gold-500: #d9a521;
+  --color-gold-700: #8a6410;
+  --color-win-hi: #3150b8;
+  --color-win-mid: #1c2c78;
+  --color-win-lo: #0b1240;
+  --color-frame: #e8ecff;
+}
+
 html,
 body,
 #root {
@@ -8,22 +27,253 @@ body,
 
 body {
   margin: 0;
-  background: #f8fafc;
-  color: #0f172a;
-  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: dark;
+  background: #050816;
+  color: #f1f4ff;
+  font-family: var(--font-pixel);
   -webkit-font-smoothing: antialiased;
+  text-shadow: 1px 1px 0 rgb(0 0 0 / 0.75);
 }
 
-@media (prefers-color-scheme: dark) {
-  body {
-    background: #020617;
-    color: #e2e8f0;
-  }
+@layer components {
+/* Night sky behind the canvas: two layers of tiny stars over a nebula wash. */
+.starfield {
+  background:
+    radial-gradient(1px 1px at 12% 18%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 72% 34%, #dbe4ff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 38% 72%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 82%, #c7d2fe 50%, transparent 51%),
+    radial-gradient(1px 1px at 55% 12%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 22% 48%, #e0e7ff 50%, transparent 51%),
+    radial-gradient(1px 1px at 92% 8%, #fff 50%, transparent 51%),
+    radial-gradient(ellipse 60% 50% at 20% 10%, rgb(76 29 149 / 0.35), transparent 70%),
+    radial-gradient(ellipse 70% 60% at 85% 90%, rgb(30 64 175 / 0.4), transparent 70%),
+    linear-gradient(180deg, #070b22 0%, #0a0f2e 55%, #060818 100%);
+  background-size:
+    220px 220px, 260px 260px, 310px 310px, 190px 190px, 340px 340px, 280px 280px, 400px 400px,
+    100% 100%, 100% 100%, 100% 100%;
+}
+
+/* ── Windows ─────────────────────────────────────────────────────────────── */
+.win {
+  position: relative;
+  border-radius: 8px;
+  border: 2px solid var(--color-frame);
+  background: linear-gradient(180deg, var(--color-win-hi) 0%, var(--color-win-mid) 45%, var(--color-win-lo) 100%);
+  box-shadow:
+    inset 0 0 0 1px rgb(10 14 50 / 0.9),
+    inset 0 0 0 3px rgb(160 176 255 / 0.25),
+    0 0 0 1px rgb(0 0 0 / 0.7),
+    0 6px 18px rgb(0 0 0 / 0.55);
+}
+.win-flat {
+  border-radius: 0;
+  border-width: 0 0 2px;
+}
+.win-inset {
+  border-radius: 4px;
+  background: rgb(4 8 32 / 0.55);
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.7), 0 0 0 1px rgb(160 176 255 / 0.25);
+}
+
+.title-gold {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: linear-gradient(180deg, #fffbe6 0%, #fde68a 40%, #d9a521 75%, #a87a12 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(1px 1px 0 rgb(0 0 0 / 0.85));
+}
+
+.label-gold {
+  color: var(--color-gold-300);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Menu command: the glove points at whichever command is hovered or focused. */
+.cmd {
+  position: relative;
+  padding: 0.25rem 0.5rem 0.25rem 1.1rem;
+  border-radius: 4px;
+  color: #f1f4ff;
+  outline: none;
+}
+.cmd::before {
+  content: '▶';
+  position: absolute;
+  left: 0.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.6rem;
+  color: var(--color-gold-300);
+  opacity: 0;
+}
+.cmd:hover::before,
+.cmd:focus-visible::before,
+.cmd[aria-pressed='true']::before {
+  opacity: 1;
+}
+.cmd:hover,
+.cmd:focus-visible {
+  background: rgb(255 255 255 / 0.08);
+}
+.cmd[aria-pressed='true'] {
+  color: var(--color-gold-300);
+}
+
+/* EXP / progress gauge. */
+.gauge {
+  height: 6px;
+  border-radius: 2px;
+  background: #050a26;
+  box-shadow: 0 0 0 1px rgb(200 210 255 / 0.55), inset 0 1px 2px rgb(0 0 0 / 0.8);
+  overflow: hidden;
+}
+.gauge > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(180deg, #fff6c9 0%, #f5c84c 45%, #b8860b 100%);
+}
+.gauge-accent > span {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 40%, white) 0%, var(--accent) 50%, color-mix(in srgb, var(--accent) 60%, black) 100%);
+}
+
+/* ── Skill orbs ──────────────────────────────────────────────────────────── */
+.orb {
+  --accent: #6366f1;
+  position: relative;
+  display: grid;
+  place-items: center;
+  border-radius: 9999px;
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  background: radial-gradient(
+    circle at 34% 28%,
+    #ffffff 0 7%,
+    color-mix(in srgb, var(--accent) 45%, white) 18%,
+    var(--accent) 48%,
+    color-mix(in srgb, var(--accent) 45%, black) 100%
+  );
+  box-shadow:
+    0 0 0 2px #0b1240,
+    0 0 0 3px rgb(232 236 255 / 0.85),
+    0 0 14px 2px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+.orb-locked {
+  background: radial-gradient(circle at 34% 28%, #9aa3bd 0 6%, #4b5470 40%, #1b2036 100%);
+  box-shadow: 0 0 0 2px #0b1240, 0 0 0 3px rgb(160 170 200 / 0.5);
+  color: #aab3cc;
+}
+.orb-ready {
+  --accent: #34d399;
+  animation: orb-ready 2s ease-in-out infinite;
+}
+.orb-mastered {
+  box-shadow:
+    0 0 0 2px #0b1240,
+    0 0 0 4px var(--color-gold-400),
+    0 0 18px 4px rgb(245 200 76 / 0.7);
+}
+@keyframes orb-ready {
+  0%, 100% { box-shadow: 0 0 0 2px #0b1240, 0 0 0 3px #a7f3d0, 0 0 6px 1px rgb(52 211 153 / 0.5); }
+  50% { box-shadow: 0 0 0 2px #0b1240, 0 0 0 3px #a7f3d0, 0 0 20px 6px rgb(52 211 153 / 0.75); }
+}
+
+/* Rank crystals (replace pips). */
+.crystal {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  transform: rotate(45deg);
+  border: 1px solid rgb(200 210 255 / 0.45);
+  background: #0a1036;
+}
+.crystal-md {
+  width: 10px;
+  height: 10px;
+}
+.crystal-on {
+  border-color: #fff;
+  background: linear-gradient(135deg, #fff 0%, var(--c) 45%, color-mix(in srgb, var(--c) 55%, black) 100%);
+  box-shadow: 0 0 5px var(--c);
+}
+
+/* ── Node cards ──────────────────────────────────────────────────────────── */
+.node-card {
+  transition: transform 150ms ease, box-shadow 150ms ease, filter 150ms ease;
+}
+.node-card:hover {
+  filter: brightness(1.12);
+}
+.node-card-locked {
+  filter: saturate(0.35) brightness(0.8);
+}
+.node-card-locked:hover {
+  filter: saturate(0.5) brightness(0.95);
+}
+.node-card-focused {
+  border-color: var(--color-gold-300) !important;
+  box-shadow:
+    inset 0 0 0 1px rgb(10 14 50 / 0.9),
+    inset 0 0 0 3px rgb(253 230 138 / 0.35),
+    0 0 0 1px rgb(0 0 0 / 0.7),
+    0 0 22px 4px rgb(245 200 76 / 0.45) !important;
+}
+.node-card-mastered {
+  border-color: var(--color-gold-400);
+}
+
+/* The pointing glove that marks the focused node. */
+.hand-cursor {
+  position: absolute;
+  left: -38px;
+  top: 50%;
+  width: 32px;
+  height: 22px;
+  margin-top: -11px;
+  pointer-events: none;
+  filter: drop-shadow(1px 2px 0 rgb(0 0 0 / 0.8));
+  animation: hand-bob 0.9s steps(2, jump-none) infinite;
+  z-index: 20;
+}
+/* Vertical layout: siblings sit side by side, so point down from above instead. */
+.hand-cursor-down {
+  left: 50%;
+  top: -34px;
+  margin: 0 0 0 -16px;
+  rotate: 90deg;
+}
+@keyframes hand-bob {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-5px); }
+}
+
 }
 
 /* Canvas */
 .react-flow {
   --xy-background-color: transparent;
+  --xy-controls-button-background-color: #1c2c78;
+  --xy-controls-button-background-color-hover: #3150b8;
+  --xy-controls-button-color: #f1f4ff;
+  --xy-controls-button-color-hover: #fde68a;
+  --xy-controls-button-border-color: rgb(232 236 255 / 0.4);
+  --xy-minimap-background-color: rgb(8 12 44 / 0.85);
+  --xy-minimap-mask-background-color: rgb(3 5 20 / 0.6);
+  --xy-minimap-mask-stroke-color: #fde68a;
+  --xy-minimap-mask-stroke-width: 2;
+}
+.react-flow__controls,
+.react-flow__minimap {
+  border: 2px solid var(--color-frame);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.7), 0 6px 18px rgb(0 0 0 / 0.55);
 }
 
 /* Glide nodes into their new layout positions, but never while dragging. */
@@ -32,20 +282,21 @@ body {
 }
 
 .tree-edge path.react-flow__edge-path {
-  stroke: #cbd5e1;
-  stroke-width: 1.5;
+  stroke: rgb(165 180 252 / 0.4);
+  stroke-width: 2;
 }
 .tree-edge-active path.react-flow__edge-path {
-  stroke: #6366f1;
-  stroke-width: 2.5;
+  stroke: #fde68a;
+  stroke-width: 3;
+  filter: drop-shadow(0 0 4px rgb(245 200 76 / 0.9));
 }
-@media (prefers-color-scheme: dark) {
-  .tree-edge path.react-flow__edge-path {
-    stroke: #334155;
-  }
-  .tree-edge-active path.react-flow__edge-path {
-    stroke: #818cf8;
-  }
+
+/* Prerequisite links: drawn only for the focused skill. */
+.req-edge path.react-flow__edge-path {
+  stroke: #f0abfc;
+  stroke-width: 2.5;
+  stroke-dasharray: 7 6;
+  filter: drop-shadow(0 0 4px rgb(232 121 249 / 0.8));
 }
 
 @keyframes drawer-in {
@@ -56,35 +307,35 @@ body {
     transform: translateX(0);
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .react-flow__node,
-  .react-flow__edge-path,
-  aside {
-    transition: none !important;
-    animation: none !important;
+@keyframes window-pop {
+  from {
+    transform: scale(0.94, 0.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
 }
 
-/* Prerequisite links: drawn only for the focused skill. */
-.req-edge path.react-flow__edge-path {
-  stroke: #f59e0b;
-  stroke-width: 2;
-  stroke-dasharray: 6 5;
-}
-@media (prefers-color-scheme: dark) {
-  .req-edge path.react-flow__edge-path {
-    stroke: #fbbf24;
-  }
-}
-
+/* Legend swatch for "ready": same pulse as the orb. */
 @keyframes ready-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgb(16 185 129 / 0.35); }
-  50% { box-shadow: 0 0 0 6px rgb(16 185 129 / 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgb(52 211 153 / 0.5); }
+  50% { box-shadow: 0 0 0 6px rgb(52 211 153 / 0); }
 }
 .ready-pulse {
   animation: ready-pulse 2.4s ease-in-out infinite;
 }
+
 @media (prefers-reduced-motion: reduce) {
-  .ready-pulse { animation: none; }
+  .react-flow__node,
+  .react-flow__edge-path,
+  aside,
+  .orb-ready,
+  .hand-cursor,
+  .ready-pulse,
+  [role='dialog'] {
+    transition: none !important;
+    animation: none !important;
+  }
 }
