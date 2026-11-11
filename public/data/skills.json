@@ -1,0 +1,132 @@
+{
+  "player": { "name": "Clark", "title": "Builder · Educator" },
+  "realms": [
+    {
+      "id": "software",
+      "label": "Software Engineering",
+      "color": "sky",
+      "summary": "Building things that run.",
+      "children": [
+        {
+          "id": "web",
+          "label": "Web Development",
+          "children": [
+            { "id": "html-css", "label": "HTML & CSS", "rank": 4, "since": "2015", "tags": ["frontend"] },
+            { "id": "javascript", "label": "JavaScript", "rank": 4, "since": "2015", "tags": ["frontend", "language"] },
+            {
+              "id": "typescript",
+              "label": "TypeScript",
+              "rank": 3,
+              "requires": ["javascript"],
+              "tags": ["language"],
+              "next": ["Write a library with strict generics and publish types", "Read through the TS handbook's type-manipulation section"]
+            },
+            {
+              "id": "react",
+              "label": "React",
+              "rank": 4,
+              "requires": ["javascript"],
+              "summary": "Component UIs, hooks, state, and rendering performance.",
+              "evidence": [{ "label": "Problem Atlas: keyboard-first React Flow map", "url": "https://clarkngo.github.io/problem-atlas/" }],
+              "children": [
+                { "id": "react-flow", "label": "React Flow / node canvases", "rank": 3, "requires": ["react"], "since": "2026" },
+                { "id": "a11y", "label": "Accessibility (ARIA, keyboard)", "rank": 3, "requires": ["html-css"], "next": ["Audit a site with a real screen reader end to end"] }
+              ]
+            },
+            { "id": "tailwind", "label": "Tailwind CSS", "rank": 3, "requires": ["html-css"] },
+            { "id": "vite", "label": "Vite & bundlers", "rank": 2, "requires": ["javascript"] }
+          ]
+        },
+        {
+          "id": "backend",
+          "label": "Backend & Data",
+          "children": [
+            { "id": "python", "label": "Python", "rank": 3, "tags": ["language"] },
+            { "id": "node", "label": "Node.js", "rank": 3, "requires": ["javascript"] },
+            { "id": "sql", "label": "SQL & relational modeling", "rank": 3 },
+            { "id": "apis", "label": "REST API design", "rank": 3, "requires": ["node"] },
+            { "id": "rust", "label": "Rust", "rank": 0, "tags": ["language"], "summary": "Someday." }
+          ]
+        },
+        {
+          "id": "craft",
+          "label": "Engineering Craft",
+          "children": [
+            { "id": "git", "label": "Git & GitHub", "rank": 4 },
+            { "id": "ci", "label": "CI/CD (GitHub Actions)", "rank": 2, "requires": ["git"] },
+            { "id": "testing", "label": "Automated testing", "rank": 2, "learning": true, "next": ["Add Playwright tests to Problem Atlas keyboard nav"] },
+            { "id": "system-design", "label": "System design", "rank": 2, "requires": ["apis", "sql"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ai",
+      "label": "AI & LLMs",
+      "color": "violet",
+      "summary": "Making models do useful, safe work.",
+      "children": [
+        {
+          "id": "llm-apps",
+          "label": "LLM Applications",
+          "children": [
+            { "id": "prompting", "label": "Prompt engineering", "rank": 4, "since": "2023" },
+            { "id": "rag", "label": "RAG & retrieval", "rank": 3, "requires": ["prompting", "python"] },
+            {
+              "id": "agents",
+              "label": "Agents & tool use",
+              "rank": 2,
+              "learning": true,
+              "requires": ["prompting", "apis"],
+              "notes": "Claude Code, MCP servers, skills. Learning by building with them daily.",
+              "next": ["Build and ship an MCP server", "Write an eval suite for an agent workflow"]
+            },
+            { "id": "mcp", "label": "Model Context Protocol", "rank": 2, "requires": ["agents"] },
+            { "id": "evals", "label": "Evals & LLM-as-judge", "rank": 0, "requires": ["agents"] },
+            { "id": "fine-tuning", "label": "Fine-tuning", "rank": 0, "requires": ["ml-basics"] }
+          ]
+        },
+        {
+          "id": "ml",
+          "label": "ML Foundations",
+          "children": [
+            { "id": "ml-basics", "label": "Classical ML", "rank": 0, "requires": ["python", "stats"] },
+            { "id": "stats", "label": "Statistics & probability", "rank": 2 },
+            { "id": "linear-algebra", "label": "Linear algebra", "rank": 1 }
+          ]
+        },
+        {
+          "id": "ai-strategy",
+          "label": "AI Strategy",
+          "children": [
+            { "id": "ai-fit", "label": "Diagnosing AI vs. process vs. automation", "rank": 4, "evidence": [{ "label": "Problem Atlas", "url": "https://clarkngo.github.io/problem-atlas/" }] },
+            { "id": "privacy", "label": "Data privacy (FERPA, HIPAA…)", "rank": 2, "requires": ["ai-fit"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "people",
+      "label": "Teaching & Communication",
+      "color": "emerald",
+      "children": [
+        { "id": "teaching", "label": "Teaching technical topics", "rank": 4 },
+        { "id": "curriculum", "label": "Curriculum design", "rank": 3, "requires": ["teaching"] },
+        { "id": "writing", "label": "Technical writing", "rank": 3 },
+        { "id": "public-speaking", "label": "Public speaking", "rank": 3 },
+        { "id": "mentoring", "label": "Mentoring", "rank": 3, "requires": ["teaching"] }
+      ]
+    },
+    {
+      "id": "life",
+      "label": "Life Skills",
+      "color": "amber",
+      "summary": "Everything outside work that's worth getting better at.",
+      "children": [
+        { "id": "cooking", "label": "Cooking", "rank": 2, "next": ["Learn five mother sauces"] },
+        { "id": "fitness", "label": "Fitness", "rank": 2 },
+        { "id": "language-learning", "label": "A new language", "rank": 0 }
+      ]
+    }
+  ]
+}
