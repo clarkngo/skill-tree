@@ -52,6 +52,7 @@ function SkillNodeCardImpl({ data }: NodeProps<SkillFlowNode>) {
   return (
     <div
       data-node-id={n.id}
+      data-dir={direction}
       role="treeitem"
       aria-level={level}
       aria-posinset={posInSet}
@@ -83,7 +84,12 @@ function SkillNodeCardImpl({ data }: NodeProps<SkillFlowNode>) {
         {orbGlyph === null ? <LockIcon className="h-4 w-4" /> : orbGlyph}
       </span>
 
-      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
+      {/* Star-map label, shown only when zoomed out (see .zoom-map). */}
+      <span className={`map-label map-label-${n.kind} ${hasChildren ? '' : 'map-label-leaf'} ${locked ? 'text-slate-400' : ''}`} aria-hidden>
+        {n.label}
+      </span>
+
+      <div className="node-body flex min-w-0 flex-1 flex-col justify-center gap-1">
         <div className="flex items-center gap-1.5">
           {isSkill ? (
             <span className={`rounded-sm px-1 text-[9px] uppercase leading-[14px] tracking-wider ${ready ? 'border border-emerald-300/70 bg-emerald-950/70 text-emerald-200' : RANKS[n.rank].badge}`}>
@@ -132,7 +138,7 @@ function SkillNodeCardImpl({ data }: NodeProps<SkillFlowNode>) {
             actions.onToggle(n.id);
           }}
           className={[
-            'nodrag absolute z-10 flex h-6 w-6 rotate-45 items-center justify-center border-2 text-[11px] shadow-md',
+            'node-toggle nodrag absolute z-10 flex h-6 w-6 rotate-45 items-center justify-center border-2 text-[11px] shadow-md',
             'bg-gradient-to-br from-win-hi to-win-lo hover:border-gold-300',
             direction === 'LR' ? '-right-3 top-1/2 -mt-3' : '-bottom-3 left-1/2 -ml-3',
             expanded ? 'border-frame/70 text-indigo-100' : 'border-gold-400 text-gold-300',
