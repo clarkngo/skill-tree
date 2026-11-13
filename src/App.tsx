@@ -7,6 +7,7 @@ import {
   ReactFlowProvider,
   applyNodeChanges,
   useReactFlow,
+  useStoreApi,
   type Edge,
   type NodeChange,
 } from '@xyflow/react';
@@ -25,6 +26,11 @@ import { play } from './lib/sfx';
 const nodeTypes = { skill: SkillNodeCard };
 
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/** Card text (13px) stops being readable below this zoom. */
+const READABLE_ZOOM = 0.6;
+/** Below this, only realm and branch names are labelled. */
+const FAR_ZOOM = 0.32;
 
 /** Matches the drawer's max-w-md. */
 const DRAWER_WIDTH = 448;
@@ -66,6 +72,26 @@ export default function App() {
 function SkillTree({ index }: { index: GraphIndex }) {
   const rf = useReactFlow<SkillFlowNode>();
   const treeRef = useRef<HTMLDivElement>(null);
+  const flowStore = useStoreApi<SkillFlowNode>();
+
+  // Semantic zoom. Below READABLE_ZOOM the card text is too small to read, so
+  // the canvas switches to a star-map view (see .zoom-map in index.css).
+  // Written straight to the DOM so zooming never re-renders the tree.
+  useEffect(() => {
+    let last = '';
+    const apply = (zoom: number) => {
+      const el = treeRef.current;
+      if (!el) return;
+      el.style.setProperty('--inv-zoom', String(1 / zoom));
+      const tier = zoom < FAR_ZOOM ? 'far' : zoom < READABLE_ZOOM ? 'map' : '';
+      if (tier === last) return;
+      last = tier;
+      el.classList.toggle('zoom-map', tier !== '');
+      el.classList.toggle('zoom-far', tier === 'far');
+    };
+    apply(flowStore.getState().transform[2]);
+    return flowStore.subscribe((s) => apply(s.transform[2]));
+  }, [flowStore]);
 
   const [direction, setDirection] = useState<LayoutDirection>(() =>
     window.matchMedia('(max-width: 640px)').matches ? 'TB' : 'LR',
@@ -383,7 +409,7 @@ function SkillTree({ index }: { index: GraphIndex }) {
               fitView={!initialDeepLink.current}
               onInit={() => initialDeepLink.current && setPanTick((t) => t + 1)}
               fitViewOptions={{ padding: 0.15, maxZoom: 1 }}
-              minZoom={0.15}
+              minZoom={0.08}
               maxZoom={1.75}
               colorMode="dark"
             >

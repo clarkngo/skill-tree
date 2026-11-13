@@ -339,3 +339,143 @@ body {
     animation: none !important;
   }
 }
+
+/* ── Semantic zoom: star-map view ────────────────────────────────────────
+   App sets .zoom-map on the tree when card text would be unreadable, and
+   --inv-zoom (1 / zoom) so sizes below can stay constant on screen. Cards
+   drop their windows and become glowing orbs with screen-sized labels;
+   .zoom-far also hides individual skill names. Layout and hit areas are
+   unchanged, so clicking and keyboard nav work exactly the same. */
+.map-label {
+  display: none;
+}
+.zoom-map .node-card {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+.zoom-map .node-card-locked {
+  filter: saturate(0.35) brightness(0.75);
+}
+.zoom-map .node-body,
+.zoom-map .node-toggle {
+  display: none;
+}
+.zoom-map .orb {
+  /* ~22px on screen for skills, never bigger than the row pitch allows. */
+  scale: min(2.2, calc(0.55 * var(--inv-zoom, 1)));
+}
+.zoom-map .node-card[aria-level='1'] .orb {
+  scale: min(2.6, calc(0.75 * var(--inv-zoom, 1)));
+}
+.zoom-map .map-label {
+  display: block;
+  position: absolute;
+  /* Just past the largest scaled orb; may run into the gap before the next column. */
+  left: 84px;
+  top: 50%;
+  translate: 0 -50%;
+  /* Content-sized, capped at the gap before the next column's orbs. */
+  width: max-content;
+  max-width: 228px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.2;
+  pointer-events: none;
+  color: #f1f4ff;
+  font-size: calc(10px * var(--inv-zoom, 1));
+  text-shadow: 0 0 calc(4px * var(--inv-zoom, 1)) rgb(0 0 0 / 0.95);
+}
+/* Leaves have nothing to their right, so their names can run longer. */
+.zoom-map .map-label-leaf {
+  max-width: 420px;
+}
+.zoom-map [data-dir='TB'] .map-label-leaf {
+  max-width: 172px;
+}
+.zoom-map [data-dir='TB'] .map-label {
+  max-width: 172px;
+}
+.zoom-map .map-label-branch {
+  font-size: calc(12px * var(--inv-zoom, 1));
+  color: #c7d2fe;
+  letter-spacing: 0.04em;
+}
+/* Realm names sit in the empty space outside the tree: left of it in the
+   horizontal layout, above it in the vertical one. */
+.zoom-map .map-label-realm {
+  left: auto;
+  right: calc(100% + 36px);
+  max-width: none;
+  overflow: visible;
+  text-align: right;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: calc(18px * var(--inv-zoom, 1));
+  letter-spacing: 0.06em;
+  color: var(--color-gold-300);
+}
+/* Vertical layout: realms sit side by side, often closer together than
+   their names are long, so names rise diagonally from the orb like chart
+   axis labels and each gets its own lane. */
+.zoom-map [data-dir='TB'] .map-label-realm {
+  right: auto;
+  left: 40px;
+  top: auto;
+  bottom: calc(100% + 6px);
+  translate: none;
+  text-align: left;
+  font-size: calc(14px * var(--inv-zoom, 1));
+  rotate: -35deg;
+  transform-origin: left bottom;
+}
+/* Nodes with children have the next column's orbs ~90px to their right, so
+   in the horizontal layout their names go above the orb instead, where the
+   fanned-out children leave room. */
+.zoom-map [data-dir='LR'] .map-label:not(.map-label-leaf):not(.map-label-realm) {
+  left: 4px;
+  top: auto;
+  bottom: calc(50% + 14px * var(--inv-zoom, 1));
+  translate: none;
+  max-width: 340px;
+}
+.zoom-far .map-label-skill,
+.zoom-far .map-label-branch {
+  display: none;
+}
+/* Focus shows on the orb, not on the (now invisible) window frame. */
+/* Same layer as .node-card-focused: a layered !important beats an unlayered one. */
+@layer components {
+  .zoom-map .node-card-focused {
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+}
+.zoom-map .node-card-focused .orb {
+  /* The orb is scaled to ~0.55 / zoom, so 4px lands at ~2px on screen. */
+  outline: 4px solid var(--color-gold-300);
+  outline-offset: 4px;
+}
+/* Keep edges and the cursor visible at any zoom. */
+.zoom-map .react-flow__edge-path {
+  vector-effect: non-scaling-stroke;
+}
+.zoom-map .tree-edge path.react-flow__edge-path {
+  stroke-width: 1.25;
+}
+.zoom-map .tree-edge-active path.react-flow__edge-path,
+.zoom-map .req-edge path.react-flow__edge-path {
+  stroke-width: 2.5;
+}
+.zoom-map .hand-cursor {
+  scale: min(3, calc(0.7 * var(--inv-zoom, 1)));
+  transform-origin: right center;
+}
+.zoom-map .node-card-focused .map-label {
+  color: var(--color-gold-200);
+}
+.zoom-map [data-dir='TB'] .hand-cursor {
+  transform-origin: center bottom;
+}
